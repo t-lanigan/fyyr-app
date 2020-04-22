@@ -1,4 +1,4 @@
-APP_NAME := todoapp
+APP_NAME := fyyr
 
 deps:
 	pip3 install -r requirements.txt
