@@ -18,3 +18,6 @@ stop-db-server:
 
 connect-to-db:
 	psql $(APP_NAME)
+
+add-fake-data-to-db:
+	python add_fake_data.py
