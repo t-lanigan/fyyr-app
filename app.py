@@ -172,12 +172,7 @@ def create_venue_submission():
 def delete_venue(venue_id):
     try:
         # first we need to delete the shows
-        show = db.session.query(Show).filter_by(venue_id=venue_id).first()
-
-        if show:
-            db.session.delete(show)
-            db.session.commit()
-            app.logger.info("Deleted shows for venue id {}".format(venue_id))
+        shows = db.session.query(Show).filter_by(venue_id=venue_id).delete()
 
         # Now we can delete the venue.
         venue = db.session.query(Venue).filter_by(id=venue_id).first()
@@ -199,12 +194,7 @@ def delete_venue(venue_id):
 def delete_artist(artist_id):
     try:
         # first we need to delete the show
-        show = db.session.query(Show).filter_by(artist_id=artist_id).first()
-
-        if show:
-            db.session.delete(show)
-            db.session.commit()
-            app.logger.info("Deleted shows for artist id {}".format(artist_id))
+        show = db.session.query(Show).filter_by(artist_id=artist_id).delete()
 
         # Now we can delete the artist.
         artist = db.session.query(Artist).filter_by(id=artist_id).first()
