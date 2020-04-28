@@ -47,9 +47,6 @@ def venues():
     # TODO: replace with real venues data.
     #       num_shows should be aggregated based on number of upcoming shows per venue.
 
-    test = Venue.query.all()
-    app.logger.info(test)
-
     data = [{
         "city": "San Francisco",
         "state": "CA",
@@ -76,7 +73,7 @@ def venues():
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
-    # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
+    # TODO: implement search on venues with partial string search. Ensure it is case-insensitive.
     # seach for Hop should return "The Musical Hop".
     # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
     response = {
@@ -224,7 +221,8 @@ def create_venue_submission():
             website=form.website.data,
             facebook_link=form.facebook_link.data,
             image_link=form.image_link.data,
-            seeking_description=form.seeking_description.data
+            seeking_description=form.seeking_description.data,
+            seeking_talent=form.seeking_talent.data
         )
         db.session.add(venue)
         db.session.commit()
@@ -448,9 +446,10 @@ def create_artist_submission():
             website=form.website.data,
             facebook_link=form.facebook_link.data,
             image_link=form.image_link.data,
-            seeking_description=form.seeking_description.data
-
+            seeking_description=form.seeking_description.data,
+            seeking_venue=form.seeking_venue.data
         )
+
         db.session.add(artist)
         db.session.commit()
         flash('Artist ' + request.form['name'] + ' was successfully listed!')

@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField
+from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
 from wtforms.validators import DataRequired, AnyOf, URL
 
 
@@ -118,10 +118,10 @@ class CommonForm(FlaskForm):
         'facebook_link', validators=[URL()]
     )
     website = StringField(
-        'website', validators=[URL()],
+        'website'
     )
     seeking_description = StringField(
-        'seeking_description', validators=[DataRequired()]
+        'seeking_description'
     )
 
 
@@ -130,7 +130,12 @@ class VenueForm(CommonForm):
     address = StringField(
         'address', validators=[DataRequired()]
     )
+    seeking_talent = BooleanField(
+        'seeking_talent'
+    )
 
 
 class ArtistForm(CommonForm):
-    pass
+    seeking_venue = BooleanField(
+        'seeking_venue'
+    )

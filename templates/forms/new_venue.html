@@ -41,9 +41,18 @@
         {{ form.website(class_ = 'form-control', placeholder='https://', autofocus = true) }}
       </div>
       <div class="form-group">
-      <label for="seeking_description">Describe what kind of band you want!</label>
-      {{ form.seeking_description(class_ = 'form-control', placeholder='Short description of what you are looking for', autofocus = true) }}
+          <label>Seeking Talent?</label>
+          <div class="form-inline">
+            <div class="form-group">
+              {{ form.seeking_talent(class_ = 'check-completed', autofocus = true) }}
+            </div>
+            <div class="form-group">
+              {{ form.seeking_description(class_ = 'form-control', placeholder='What kind of talent?', autofocus = true) }}
+            </div>
+          </div>
       </div>
+
+
       <input type="submit" value="Create Venue" class="btn btn-primary btn-lg btn-block">
     </form>
   </div>
