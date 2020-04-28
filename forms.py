@@ -219,3 +219,10 @@ class ArtistForm(FlaskForm):
         # TODO implement enum restriction
         'facebook_link', validators=[URL()],
     )
+    website = StringField(
+        # TODO implement enum restriction
+        'website', validators=[URL()],
+    )
+    seeking_description = StringField(
+        'seeking_description', validators=[DataRequired()]
+    )
