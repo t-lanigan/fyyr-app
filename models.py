@@ -14,41 +14,41 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 
-class Venue(db.Model):
-    __tablename__ = 'venues'
+class CommonModel(db.Model):
+    __abstract__ = True
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120))
     # Works for postsgres, but not everything.
     genres = db.Column(db.ARRAY(db.String()))
-    address = db.Column(db.String(120))
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
     phone = db.Column(db.String(120))
     website = db.Column(db.String(200))
     facebook_link = db.Column(db.String(120))
-    seeking_talent = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
+
+
+class Venue(CommonModel):
+    __tablename__ = 'venues'
+
+    address = db.Column(db.String(120))
+    seeking_talent = db.Column(db.Boolean)
     shows = db.relationship('Show', backref='venue', lazy=True)
 
+    def __repr__(self):
+        return f'<Venue ID: {self.id} Name: {self.name}>'
 
-class Artist(db.Model):
+
+class Artist(CommonModel):
     __tablename__ = 'artists'
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    # Works for postsgres, but not everything.
-    genres = db.Column(db.ARRAY(db.String()))
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
-    phone = db.Column(db.String(120))
-    website = db.Column(db.String(200))
-    facebook_link = db.Column(db.String(120))
-    image_link = db.Column(db.String(500))
     seeking_venue = db.Column(db.Boolean)
-    seeking_description = db.Column(db.String(120))
     shows = db.relationship('Show', backref='artist', lazy=True)
+
+    def __repr__(self):
+        return f'<Artist ID: {self.id} Name: {self.name}>'
 
 
 class Show(db.Model):
@@ -60,3 +60,6 @@ class Show(db.Model):
         'artists.id'), nullable=False)
     venue_id = db.Column(db.Integer, db.ForeignKey(
         'venues.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<Show ID: {self.id} Start Time: {self.start_time}>'
