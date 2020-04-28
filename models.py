@@ -18,7 +18,7 @@ class CommonModel(db.Model):
     __abstract__ = True
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120))
+    name = db.Column(db.String(120), unique=True)
     # Works for postsgres, but not everything.
     genres = db.Column(db.ARRAY(db.String()))
     city = db.Column(db.String(120))

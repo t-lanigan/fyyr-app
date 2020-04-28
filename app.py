@@ -395,6 +395,7 @@ def create_artist_submission():
         app.logger.error("An error occured: {}".format(e))
         flash('An error occurred. Artist ' +
               request.form['name'] + ' could not be listed.')
+
     return render_template('pages/home.html')
 
 
