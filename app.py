@@ -46,28 +46,26 @@ def index():
 def venues():
     # TODO: replace with real venues data.
     #       num_shows should be aggregated based on number of upcoming shows per venue.
+    data = []
+    for value in db.session.query(Venue.city).distinct():
+        venues = db.session.query(Venue).filter(
+            Venue.city == value[0])
+        d = {}
+        d["city"] = value[0]
+        d["state"] = venues.first().state
+        d['venues'] = []
+        for venue in venues:
+            venues_dict = {}
+            upcoming_shows = db.session.query(Show)\
+                .filter_by(venue_id=venue.id)\
+                .filter(Show.start_time > datetime.today())\
+                .all()
+            venues_dict['id'] = venue.id
+            venues_dict['name'] = venue.name
+            venues_dict['num_upcoming_shows'] = len(upcoming_shows)
 
-    data = [{
-        "city": "San Francisco",
-        "state": "CA",
-        "venues": [{
-            "id": 1,
-            "name": "The Musical Hop",
-            "num_upcoming_shows": 0,
-        }, {
-            "id": 3,
-            "name": "Park Square Live Music & Coffee",
-            "num_upcoming_shows": 1,
-        }]
-    }, {
-        "city": "New York",
-        "state": "NY",
-        "venues": [{
-            "id": 2,
-            "name": "The Dueling Pianos Bar",
-            "num_upcoming_shows": 0,
-        }]
-    }]
+            d['venues'].append(venues_dict)
+        data.append(d)
     return render_template('pages/venues.html', areas=data)
 
 
@@ -76,7 +74,6 @@ def search_venues():
     wild_search_term = '%' + request.form.get('search_term', '') + '%'
     like_venues = Venue.query.filter(
         Venue.name.ilike(wild_search_term)).all()
-
     data = []
     for venue in like_venues:
         upcoming_shows = db.session.query(Show)\
@@ -90,7 +87,6 @@ def search_venues():
                 "num_upcoming_shows": len(upcoming_shows)
             }
         )
-
     response = {
         "count": len(data),
         "data": data
