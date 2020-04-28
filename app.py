@@ -272,25 +272,30 @@ def search_artists():
     # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
     # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
     # search for "band" should return "The Wild Sax Band".
-    response = {
-        "count": 1,
-        "data": [{
-            "id": 4,
-            "name": "Guns N Petals",
-            "num_upcoming_shows": 0,
-        }]
-    }
-    return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
+    wild_search_term = '%' + request.form.get('search_term', '') + '%'
+    like_artists = Artist.query.filter(
+        Artist.name.ilike(wild_search_term)).all()
 
-# "past_shows": [{
-# -            "venue_id": 1,
-# -            "venue_name": "The Musical Hop",
-# -            "venue_image_link": "https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
-# -            "start_time": "2019-05-21T21:30:00.000Z"
-# -        }],
-# -        "upcoming_shows": [],
-# -        "past_shows_count": 1,
-# -        "upcoming_shows_count": 0,
+    data = []
+    for artist in like_artists:
+        upcoming_shows = db.session.query(Show)\
+            .filter_by(artist_id=artist.id)\
+            .filter(Show.start_time > datetime.today())\
+            .all()
+        data.append(
+            {
+                "id": artist.id,
+                "name": artist.name,
+                "num_upcoming_shows": len(upcoming_shows)
+            }
+        )
+
+    response = {
+        "count": len(data),
+        "data": data
+    }
+
+    return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
 
 
 @app.route('/artists/<int:artist_id>')
@@ -298,7 +303,6 @@ def show_artist(artist_id):
     artist = Artist.query.filter_by(id=artist_id).first()
     data = artist.__dict__
 
-    # for show in db.session.query(Show).filter_by(artist_id=artist.id).all():
     # Get the upcoming shows
     upcoming_shows = db.session.query(Show)\
         .filter_by(artist_id=artist_id)\
@@ -310,31 +314,27 @@ def show_artist(artist_id):
         .filter(Show.start_time < datetime.today())\
         .all()
 
-    past_show_data = []
-    for show in past_shows:
-        d = {}
-        d['venue_id'] = show.venue_id
-        d['venue_name'] = show.venue.name
-        d['venue_image_link'] = show.venue.image_link
-        d['start_time'] = str(show.start_time)
-        past_show_data.append(d)
-
-    upcoming_show_data = []
-    for show in upcoming_shows:
-        d = {}
-        d['venue_id'] = show.venue_id
-        d['venue_name'] = show.venue.name
-        d['venue_image_link'] = show.venue.image_link
-        d['start_time'] = str(show.start_time)
-        upcoming_show_data.append(d)
-
-    data['past_shows'] = past_show_data
-    data['upcoming_shows'] = upcoming_show_data
+    data['past_shows'] = get_show_data(past_shows)
+    data['upcoming_shows'] = get_show_data(upcoming_shows)
     data['past_shows_count'] = len(past_shows)
     data['upcoming_shows_count'] = len(upcoming_shows)
 
-    app.logger.info(data)
     return render_template('pages/show_artist.html', artist=data)
+
+
+def get_show_data(shows):
+    """
+    Helper fuction for show_artist controller.
+    """
+    show_data = []
+    for show in shows:
+        d = {}
+        d['venue_id'] = show.venue_id
+        d['venue_name'] = show.venue.name
+        d['venue_image_link'] = show.venue.image_link
+        d['start_time'] = str(show.start_time)
+        show_data.append(d)
+    return show_data
 
 #  Update
 #  ----------------------------------------------------------------
