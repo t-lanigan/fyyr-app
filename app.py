@@ -171,11 +171,13 @@ def create_venue_submission():
 @app.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
     try:
-        # first we need to delete the show
+        # first we need to delete the shows
         show = db.session.query(Show).filter_by(venue_id=venue_id).first()
-        db.session.delete(show)
-        db.session.commit()
-        app.logger.info("Deleted shows for venue id {}".format(venue_id))
+
+        if show:
+            db.session.delete(show)
+            db.session.commit()
+            app.logger.info("Deleted shows for venue id {}".format(venue_id))
 
         # Now we can delete the venue.
         venue = db.session.query(Venue).filter_by(id=venue_id).first()
@@ -198,16 +200,18 @@ def delete_artist(artist_id):
     try:
         # first we need to delete the show
         show = db.session.query(Show).filter_by(artist_id=artist_id).first()
-        db.session.delete(show)
-        db.session.commit()
-        app.logger.info("Deleted shows for artist id {}".format(artist_id))
 
-        # Now we can delete the venue.
+        if show:
+            db.session.delete(show)
+            db.session.commit()
+            app.logger.info("Deleted shows for artist id {}".format(artist_id))
+
+        # Now we can delete the artist.
         artist = db.session.query(Artist).filter_by(id=artist_id).first()
         name = artist.name
-        msg = 'Artist, ' + name + ' successfully deleted.'
         db.session.delete(artist)
         db.session.commit()
+        msg = 'Artist, ' + name + ' successfully deleted.'
         app.logger.info(msg)
         flash(msg)
     except Exception as e:
@@ -256,8 +260,6 @@ def search_artists():
 
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
-    # BONUS CHALLENGE: Implement a button to delete a Artist on a Artist Page, have it so that
-    # clicking that button delete it from the db then redirect the user to the homepage
     artist = Artist.query.filter_by(id=artist_id).first()
     data = artist.__dict__
 
