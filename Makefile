@@ -9,6 +9,7 @@ run:
 reset-db:
 	dropdb $(APP_NAME) && createdb $(APP_NAME)
 	flask db upgrade
+	python add_fake_data.py
 
 start-db-server:
 	pg_ctl -D /usr/local/var/postgres start
@@ -21,6 +22,3 @@ connect-to-db:
 
 delete-venue:
 	curl -X DELETE http://localhost:5000/venues/1
-
-add-fake-data-to-db:
-	python add_fake_data.py

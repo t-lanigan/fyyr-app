@@ -55,19 +55,24 @@ artist2 = Artist(
     seeking_venue=True,
     seeking_description='Fake it till you make it baby!'
 )
-
-db.session.add(venue)
-db.session.add(artist)
-db.session.add(venue2)
-db.session.add(artist2)
+add_list = [venue, venue2, artist, artist2]
+[db.session.add(item) for item in add_list]
 db.session.commit()
 
 show = Show(
-    start_time=datetime.today(),
-    artist_id=Artist.query.first().id,
-    venue_id=Venue.query.first().id
+    start_time=datetime(2020, 4, 25, 20, 40, 19, 448277),
+    artist_id=1,
+    venue_id=1
 )
-db.session.add(show)
+
+show2 = Show(
+    start_time=datetime(2020, 6, 25, 20, 40, 19, 448277),
+    artist_id=2,
+    venue_id=2
+)
+
+add_list = [show, show2]
+[db.session.add(item) for item in add_list]
 db.session.commit()
 
 db.session.close()
