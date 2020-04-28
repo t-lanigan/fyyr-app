@@ -19,5 +19,8 @@ stop-db-server:
 connect-to-db:
 	psql $(APP_NAME)
 
+delete-venue:
+	curl -X DELETE http://localhost:5000/venues/1
+
 add-fake-data-to-db:
 	python add_fake_data.py
